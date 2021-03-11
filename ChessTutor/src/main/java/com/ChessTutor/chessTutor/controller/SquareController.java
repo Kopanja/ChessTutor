@@ -19,6 +19,7 @@ import com.ChessTutor.chessTutor.model.Piece;
 import com.ChessTutor.chessTutor.model.Square;
 import com.ChessTutor.chessTutor.repository.PieceRepository;
 import com.ChessTutor.chessTutor.repository.SquareRepository;
+import com.ChessTutor.chessTutor.service.PieceService;
 import com.ChessTutor.chessTutor.util.FenParser;
 
 @RestController
@@ -31,6 +32,9 @@ public class SquareController {
 	@Autowired
 	PieceRepository pieceRepo;
 	
+	@Autowired
+	PieceService pieceService;
+	
 	@RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Square>> getAllSquares() {
         //System.out.println("USAO");
@@ -38,6 +42,26 @@ public class SquareController {
 		//FenParser.parse("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq c6 0 2", squareRepo);
 		List<Square> squares = squareRepo.findAll();
 		//System.out.println(squares);
+        return new ResponseEntity<>(squares, HttpStatus.OK);
+    }
+	
+	@RequestMapping(value = "/reset-board", method = RequestMethod.GET)
+    public ResponseEntity<List<Square>> resetBoard() {
+		pieceRepo.deleteAll();
+		FenParser.parse("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq c6 0 2", squareRepo);
+		List<Square> squares = squareRepo.findAll();
+		//System.out.println(squares);
+        return new ResponseEntity<>(squares, HttpStatus.OK);
+    }
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+    public ResponseEntity<List<Square>> testMethod() {
+		//List<Piece> pieces = pieceRepo.findByTypeTest("Bishop");
+		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		//pieceService.createVisionSquaresForAll();
+		pieceService.createVisionSquaresKing();
+		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+		List<Square> squares = squareRepo.findAll();
         return new ResponseEntity<>(squares, HttpStatus.OK);
     }
 	

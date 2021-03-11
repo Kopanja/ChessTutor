@@ -31,5 +31,6 @@ public interface SquareRepository extends Neo4jRepository<Square, Long> {
 			+ "RETURN s")
 	Square findSquareByGraphName(String name);
 	
-
+	@Query("MATCH (:Square)-[rel]->(s:Square) WHERE type(rel) = $direction RETURN s")
+	List<Square> findByRelationshipTest(String direction);
 }
