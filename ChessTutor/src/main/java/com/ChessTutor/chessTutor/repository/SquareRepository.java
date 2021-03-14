@@ -33,4 +33,31 @@ public interface SquareRepository extends Neo4jRepository<Square, Long> {
 	
 	@Query("MATCH (:Square)-[rel]->(s:Square) WHERE type(rel) = $direction RETURN s")
 	List<Square> findByRelationshipTest(String direction);
+	
+	//---------Queries for PATHS---------------------------------------------------------------------------
+	@Query("MATCH (s:Square)-[:DIAGONAL_LEFT_UP *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findDiagLeftUpPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:DIAGONAL_RIGHT_UP *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findDiagRightUpPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:DIAGONAL_LEFT_DOWN *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findDiagLeftDownPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:DIAGONAL_RIGHT_DOWN *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findDiagRightDownPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:UP *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findUpPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:DOWN *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findDownPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:RIGHT *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findRightPath(Long squareId);
+	
+	@Query("MATCH (s:Square)-[:LEFT *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findLeftPath(Long squareId);
+	
+	
 }

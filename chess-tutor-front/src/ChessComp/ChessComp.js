@@ -7,22 +7,26 @@ import PropTypes from "prop-types";
 class ChessComp extends Component {
   static propTypes = { children: PropTypes.func };
 
-  state = {
-    fen: "start",
-    // square styles for active drop square
-    dropSquareStyle: {},
-    // custom square styles
-    squareStyles: {},
-    // square with the currently clicked piece
-    pieceSquare: "",
-    // currently clicked square
-    square: "",
-    // array of past game moves
-    history: [],
-    squares : []
-  };
+  
   constructor(props){
     super(props);
+
+    this.state = {
+      fen: "start",
+      // square styles for active drop square
+      dropSquareStyle: {},
+      // custom square styles
+      squareStyles: {},
+      // square with the currently clicked piece
+      pieceSquare: "",
+      // currently clicked square
+      square: "",
+      // array of past game moves
+      history: [],
+      squares : []
+    };
+    this.fenChanged = this.fenChanged.bind(this);
+    this.sendFen = this.sendFen.bind(this);
     
   }
 
@@ -62,6 +66,21 @@ class ChessComp extends Component {
     //}));
   };
 
+  sendFen(event){
+    console.log(this.state.fen);
+    event.preventDefault();
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fenString: this.state.fen })
+  };
+    fetch('http://localhost:8080/api/square/reset-board/', requestOptions);
+  };
+
+  fenChanged(event){
+    this.setState({fen : event.target.value});
+    
+  };
   onSquareClick = square => {
     let squareObj = {id : 0, name : "", pieceId : 0}
     const requestOptions = {
@@ -119,10 +138,14 @@ class ChessComp extends Component {
     const {squares} = this.state; 
     return (
       <div>
-        <Chessboard position="start" onSquareClick = {this.onSquareClick}
+        <Chessboard position={this.state.fen} onSquareClick = {this.onSquareClick}
         squareStyles={this.state.squareStyles}/>
-       
-        {squares}
+        <form  onSubmit={this.sendFen}>
+          <label>FEN:</label>
+          <input type ="text" value={this.state.fen} onChange={this.fenChanged}></input>
+          <input type="submit" value="Submit"></input>
+        </form>
+
       </div>
     );
   }

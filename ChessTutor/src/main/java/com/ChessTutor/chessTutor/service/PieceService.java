@@ -16,6 +16,7 @@ public class PieceService {
 		this.createVisionSquaresRook();
 		this.createVisionSquaresQueen();
 		this.createVisionSquaresKing();
+		this.createVisionSquaresKnight();
 
 	}
 	
@@ -59,6 +60,13 @@ public class PieceService {
 		pieceRepo.createVisionSquareForKing("DIAGONAL_RIGHT_DOWN");
 		pieceRepo.createVisionSquareForKing("DIAGONAL_LEFT_UP");
 		pieceRepo.createVisionSquareForKing("DIAGONAL_LEFT_DOWN");
+	}
+	
+	public void createVisionSquaresKnight() {
+		pieceRepo.createVisionKnightUP();
+		pieceRepo.createVisionKnightDOWN();
+		pieceRepo.createVisionKnightLEFT();
+		pieceRepo.createVisionKnightRIGHT();
 	}
 	
 	

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ChessTutor.chessTutor.dto.FenDTO;
 import com.ChessTutor.chessTutor.dto.SquareDTO;
 import com.ChessTutor.chessTutor.dto.SquareNameDTO;
 import com.ChessTutor.chessTutor.model.Piece;
@@ -45,10 +46,11 @@ public class SquareController {
         return new ResponseEntity<>(squares, HttpStatus.OK);
     }
 	
-	@RequestMapping(value = "/reset-board", method = RequestMethod.GET)
-    public ResponseEntity<List<Square>> resetBoard() {
+	@PostMapping(value = "/reset-board")
+    public ResponseEntity<List<Square>> resetBoard(@RequestBody FenDTO fen) {
 		pieceRepo.deleteAll();
-		FenParser.parse("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq c6 0 2", squareRepo);
+		FenParser.parse(fen.getFenString(), squareRepo);
+		pieceService.createVisionSquaresForAll();
 		List<Square> squares = squareRepo.findAll();
 		//System.out.println(squares);
         return new ResponseEntity<>(squares, HttpStatus.OK);
@@ -57,11 +59,8 @@ public class SquareController {
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseEntity<List<Square>> testMethod() {
 		//List<Piece> pieces = pieceRepo.findByTypeTest("Bishop");
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		//pieceService.createVisionSquaresForAll();
-		pieceService.createVisionSquaresKing();
-		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-		List<Square> squares = squareRepo.findAll();
+		Square s = squareRepo.findSquareByPiece(242L);
+		List<Square> squares = squareRepo.findDiagLeftUpPath(s.getId());
         return new ResponseEntity<>(squares, HttpStatus.OK);
     }
 	

@@ -22,7 +22,7 @@ public interface PieceRepository extends Neo4jRepository<Piece, Long>{
 	@Query("MATCH (p:Piece{type : $pieceType}) RETURN p")
 	List<Piece> findByTypeTest(String pieceType);
 	
-	//---------ROOK-----------------------------------------------------
+	//-----------------------------------------------------------
 	
 	@Query("MATCH (p:Piece{type : \"King\"})-[r:IsOn]->(s:Square)\r\n"
 			+ "MATCH (s)-[rel]->(s2:Square)\r\n"
@@ -101,4 +101,28 @@ public interface PieceRepository extends Neo4jRepository<Piece, Long>{
 	void createVisionDiagLeftDown(String pieceType);
 	//-------------------------------------------------------------------------------------
 
+	@Query("MATCH (p:Piece{type : \"Knight\"})-[r:IsOn]->(s:Square)\r\n"
+			+ "MATCH (s)-[:UP]->(:Square)-[:UP]->(s2:Square)-[:LEFT|:RIGHT]->(s3:Square)\r\n"
+			+ "WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))\r\n"
+			+ "CREATE (p)-[:VISION_SQUARE]->(s3)")
+	void createVisionKnightUP();
+	
+	@Query("MATCH (p:Piece{type : \"Knight\"})-[r:IsOn]->(s:Square)\r\n"
+			+ "MATCH (s)-[:DOWN]->(:Square)-[:DOWN]->(s2:Square)-[:LEFT|:RIGHT]->(s3:Square)\r\n"
+			+ "WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))\r\n"
+			+ "CREATE (p)-[:VISION_SQUARE]->(s3)")
+	void createVisionKnightDOWN();
+	
+	@Query("MATCH (p:Piece{type : \"Knight\"})-[r:IsOn]->(s:Square)\r\n"
+			+ "MATCH (s)-[:LEFT]->(:Square)-[:LEFT]->(s2:Square)-[:UP|:DOWN]->(s3:Square)\r\n"
+			+ "WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))\r\n"
+			+ "CREATE (p)-[:VISION_SQUARE]->(s3)")
+	void createVisionKnightLEFT();
+	
+	@Query("MATCH (p:Piece{type : \"Knight\"})-[r:IsOn]->(s:Square)\r\n"
+			+ "MATCH (s)-[:RIGHT]->(:Square)-[:RIGHT]->(s2:Square)-[:UP|:DOWN]->(s3:Square)\r\n"
+			+ "WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))\r\n"
+			+ "CREATE (p)-[:VISION_SQUARE]->(s3)")
+	void createVisionKnightRIGHT();
+	
 }
