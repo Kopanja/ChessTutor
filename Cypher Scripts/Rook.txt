@@ -1,0 +1,107 @@
+CREATE VISION_SQUARE relationship for ROOK
+///////////////////////////////////////////////////////////////
+--UP
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--DOWN
+
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--LEFT
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:LEFT *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:LEFT]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--RIGHT
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:RIGHT *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:RIGHT]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+
+
+//ONE TO RULE THEM ALL
+MATCH (p:Piece{type : $pieceType})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[rel *]->(s2:Square)
+WHERE type(rel) = $direction
+UNWIND nodes(ns) as n
+MATCH (n)-[rel2]->(s3)
+WHERE (NOT EXISTS((p)-[:VISION_SQUARE]->(s3))) AND  (type(rel2) = $direction)
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+///////////////////////////////////////////////////////
+
+POSSIBLE MOVES
+
+--UP
+
+MATCH (p:Piece {type : "ROOK"})-[:IsOn]->(s:Square)
+MATCH (s)-[:UP *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "UP>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------
+--DOWN
+
+MATCH (p:Piece {type : "ROOK"})-[:IsOn]->(s:Square)
+MATCH (s)-[:DOWN *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "DOWN>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------
+--LEFT
+
+MATCH (p:Piece {type : "ROOK"})-[:IsOn]->(s:Square)
+MATCH (s)-[:LEFT *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "LEFT>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------
+--RIGHT
+
+MATCH (p:Piece {type : "ROOK"})-[:IsOn]->(s:Square)
+MATCH (s)-[:RIGHT *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "RIGHT>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------

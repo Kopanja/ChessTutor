@@ -15,6 +15,10 @@ public interface PieceRepository extends Neo4jRepository<Piece, Long>{
 	
 	Optional<Piece> findById(Long id);
 	
+	@Query("MATCH (piece:Piece)-[:IsOn]->(square:Square) WHERE(id(square) = $squareId) RETURN piece")
+	Piece findPieceBySquare(Long squareId);
+	
+	
 	@Query("MATCH (n:Piece)\r\n"
 			+ "DETACH DELETE n")
 	void removeAllPieces();
@@ -124,5 +128,33 @@ public interface PieceRepository extends Neo4jRepository<Piece, Long>{
 			+ "WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))\r\n"
 			+ "CREATE (p)-[:VISION_SQUARE]->(s3)")
 	void createVisionKnightRIGHT();
+	
+	@Query("MATCH (p:Piece)\r\n"
+			+ "MATCH (s:Square)\r\n"
+			+ "WHERE id(p) = $pieceId AND id(s) = $squareId\r\n"
+			+ "CREATE (p)-[:canMoveOn]->(s)")
+	void createCanMoveRelationship(Long pieceId, Long squareId);
+	
+	
+	@Query("MATCH (p:Piece)\r\n"
+			+ "MATCH (p2:Piece)\r\n"
+			+ "WHERE id(p) = $pieceId AND id(p2) = $piece2Id\r\n"
+			+ "CREATE (p)-[:isAttacking]->(p2)")
+	void createIsAttackingRelationship(Long pieceId, Long piece2Id);
+	
+	@Query("MATCH (p:Piece)\r\n"
+			+ "MATCH (p2:Piece)\r\n"
+			+ "WHERE id(p) = $pieceId AND id(p2) = $piece2Id\r\n"
+			+ "CREATE (p)-[:isDefending]->(p2)")
+	void createIsDefendingRelationship(Long pieceId, Long piece2Id);
+	
+	@Query("MATCH (p:Piece)\r\n"
+			+ "MATCH (p2:Piece)\r\n"
+			+ "WHERE id(p) = $pieceId AND id(p2) = $piece2Id\r\n"
+			+ "CREATE (p)-[:isXRaying]->(p2)")
+	void createIsXRayingRelationship(Long pieceId, Long piece2Id);
+	
+	
+	
 	
 }

@@ -59,5 +59,31 @@ public interface SquareRepository extends Neo4jRepository<Square, Long> {
 	@Query("MATCH (s:Square)-[:LEFT *]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
 	List<Square> findLeftPath(Long squareId);
 	
+	@Query("MATCH (s:Square)-[:LEFT|:RIGHT|:UP|:DOWN|:DIAGONAL_LEFT_UP|:DIAGONAL_LEFT_DOWN|:DIAGONAL_RIGHT_UP|:DIAGONAL_RIGHT_DOWN]->(s2:Square) WHERE id(s) = $squareId RETURN s2")
+	List<Square> findKingSquares(Long squareId);
+	
+	
+	@Query("MATCH (s)-[:UP]->(:Square)-[:UP]->(s2:Square)-[:LEFT|:RIGHT]->(s3:Square)\r\n"
+			+ "WHERE id(s) = $squareId\r\n"
+			+ "RETURN s3")
+	List<Square> findKnightSquaresUP(Long squareId);
+	
+	@Query("MATCH (s)-[:DOWN]->(:Square)-[:DOWN]->(s2:Square)-[:LEFT|:RIGHT]->(s3:Square)\r\n"
+			+ "WHERE id(s) = $squareId\r\n"
+			+ "RETURN s3")
+	List<Square> findKnightSquaresDOWN(Long squareId);
+	
+	@Query("MATCH (s)-[:LEFT]->(:Square)-[:LEFT]->(s2:Square)-[:UP|:DOWN]->(s3:Square)\r\n"
+			+ "WHERE id(s) = $squareId\r\n"
+			+ "RETURN s3")
+	List<Square> findKnightSquaresLEFT(Long squareId);
+	
+	@Query("MATCH (s)-[:RIGHT]->(:Square)-[:RIGHT]->(s2:Square)-[:UP|:DOWN]->(s3:Square) "
+			+ "WHERE id(s) = $squareId\r\n"
+			+ "RETURN s3")
+	List<Square> findKnightSquaresRIGHT(Long squareId);
+	
+
+	
 	
 }

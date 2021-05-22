@@ -1,0 +1,37 @@
+CALL apoc.trigger.add('is-defending', 
+"UNWIND $createdRelationships as r
+MATCH (p:Piece)-[r:VISION_SQUARE]->(s:Square)<-[:IsOn]-(p2:Piece)
+WHERE (p.color = p2.color)
+CREATE (p)-[:isDefending]->(p2)",{phase:'before'})
+---------------------------------------------------------------------
+MATCH (p:Piece{type : 'Knight'})-[:VISION_SQUARE]-(s:Square)<-[:IsOn]-(p2:Piece)
+RETURN p,s, p2
+----------------------------------------------------------------------
+MATCH (p:Piece)-[r:isAttacking]->(p2:Piece)
+WHERE count(r) > 1
+CREATE (p)-[:hasTactic]->(:Fork)
+------------------------------------------------
+-----FORK QUERY----------------------------------
+MATCH (p:Piece)-[:isAttacking]->(p2:Piece)
+WITH p, count(p2) as cnt, collect(p2) as pieces
+WHERE cnt > 1
+CREATE (p)-[:hasTactic]->(f:Tactic {type : "Fork"})
+WITH p,f, pieces
+UNWIND pieces as p3
+CREATE (f)-[:on]->(p3)
+RETURN p,f,p3
+---------------------------------------------------------------------
+CALL apoc.trigger.add('fork', 
+"UNWIND $createdRelationships as r
+MATCH (p:Piece)-[s:type(r)]->(p2:Piece)
+WITH p, count(p2) as cnt, collect(p2) as pieces
+WHERE cnt > 1
+CREATE (p)-[:hasTactic]->(f:Tactic{type : 'Fork'})
+WITH p,f, pieces
+UNWIND pieces as p3
+CREATE (f)-[:on]->(p3)",{phase:'before'})
+////////////////////////////////////////////////////////////////////////
+APOC>PATH>EXPAND
+CALL apoc.path.expand(startNode <id>|Node, relationshipFilter, labelFilter, minLevel, maxLevel )
+call apoc.path.expand(2,"DIAGONAL_LEFT_UP>|DIAGONAL_RIGHT_UP>|DIAGONAL_LEFT_DOWN>|DIAGONAL_RIGHT_DOWN>", "*",0,8) yield path
+return path

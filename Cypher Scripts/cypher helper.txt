@@ -1,0 +1,160 @@
+CREATE (n:Square {file: '1', rank: '5'})
+
+//Delete all nodes and relationships
+MATCH (n)
+DETACH DELETE n
+
+//Delete relationship type
+MATCH (n)-[r:DIAGONAL_UP]->()
+DELETE r
+
+
+//Create UP relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s2.file = s1.file) AND (s1.rank = (s2.rank + 1)) AND (NOT EXISTS((s1)-[:UP]-(s2)))
+CREATE (s1)<-[r:UP]-(s2)
+return  s1,s2,r
+
+//Create DOWN relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s2.file = s1.file) AND (s1.rank = (s2.rank - 1)) AND (NOT EXISTS((s1)-[:DOWN]-(s2)))
+CREATE (s1)<-[r:DOWN]-(s2)
+return  s1,s2,r
+
+//Create DIAGONAL_RIGHT_UP relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s1.file = (s2.file + 1)) AND (s1.rank = (s2.rank + 1)) AND (NOT EXISTS((s1)-[:DIAGONAL_RIGHT_UP]-(s2)))
+CREATE (s1)<-[r:DIAGONAL_RIGHT_UP]-(s2)
+return  s1,s2,r
+
+
+//Create DIAGONAL_LEFT_UP relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s1.file = (s2.file - 1)) AND (s1.rank = (s2.rank + 1)) AND (NOT EXISTS((s1)-[:DIAGONAL_LEFT_UP]-(s2)))
+CREATE (s1)<-[r:DIAGONAL_LEFT_UP]-(s2)
+return  s1,s2,r
+
+//Create DIAGONAL_RIGHT_DOWN relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s1.file = (s2.file + 1)) AND (s1.rank = (s2.rank - 1)) AND (NOT EXISTS((s1)-[:DIAGONAL_RIGHT_DOWN]-(s2)))
+CREATE (s1)<-[r:DIAGONAL_RIGHT_DOWN]-(s2)
+return  s1,s2,r
+
+//Create DIAGONAL_LEFT_DOWN relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s1.file = (s2.file - 1)) AND (s1.rank = (s2.rank - 1)) AND (NOT EXISTS((s1)-[:DIAGONAL_LEFT_DOWN]-(s2)))
+CREATE (s1)<-[r:DIAGONAL_LEFT_DOWN]-(s2)
+return  s1,s2,r
+
+//Create LEFT relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s1.file = (s2.file - 1)) AND (s1.rank = s2.rank) AND (NOT EXISTS((s1)-[:LEFT]-(s2)))
+CREATE (s1)<-[r:LEFT]-(s2)
+return  s1,s2,r
+
+//Create RIGHT relationship
+MATCH (s1:Square)
+MATCH (s2:Square)
+WHERE (s1.file = (s2.file + 1)) AND (s1.rank = s2.rank) AND (NOT EXISTS((s1)-[:RIGHT]-(s2)))
+CREATE (s1)<-[r:RIGHT]-(s2)
+return  s1,s2,r
+///////////////////////////////////////////////////////////////////////////////////////
+//CREATE NEXT_MOVE relationship for WHITE PAWN
+MATCH (p:Piece{type : "Pawn", color : "white"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:UP]->(s2:Square)
+CREATE (p)-[r2:NEXT_MOVE]->(s2)
+RETURN p,s,s2,r2
+
+///////////////////////////////////////////////////////////////////////////
+//CREATE NEXT_MOVE relationship for BLACK PAWN
+MATCH (p:Piece{type : "Pawn", color : "black"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DOWN]->(s2:Square)
+CREATE (p)-[r2:NEXT_MOVE]->(s2)
+RETURN p,s,s2,r2
+////////////////////////////////////////////////////////////////////////////////
+//CREATE VISION_SQUARE relationship for BISHOP
+
+---DIAGONAL_RIGHT_UP
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_RIGHT_UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_RIGHT_UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_RIGHT_DOWN
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_RIGHT_DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_RIGHT_DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_LEFT_UP
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_LEFT_UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_LEFT_UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_LEFT_DOWN
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_LEFT_DOWM *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_LEFT_DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+///////////////////////////////////////////////////////////////////////////
+CREATE VISION_SQUARE relationship for ROOK
+--UP
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--DOWN
+
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--LEFT
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:LEFT *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:LEFT]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--RIGHT
+MATCH (p:Piece{type : "Rook"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:RIGHT *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:RIGHT]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p

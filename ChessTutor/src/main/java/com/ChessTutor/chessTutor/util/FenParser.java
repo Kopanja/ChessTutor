@@ -118,60 +118,74 @@ public class FenParser {
 		
 		String type = "";
 		String color = "";
+		int value = 0;
 		switch(fen) {
 		  case "P":
 		    type = "Pawn";
 		    color = "white";
+		    value = 1;
 		    break;
 		  case "p":
 			  type = "Pawn";
 			  color = "black";
+			  value = 1;
 		    break;
 		  case "N":
 			  type = "Knight";
 			  color = "white";
+			  value = 3;
 			break;
 		  case "n":
 			  type = "Knight";
 			  color = "black";
+			  value = 3;
 			break;
 		  case "B":
 			  type = "Bishop";
 			  color = "white";
+			  value = 3;
 			break;
 		  case "b":
 			  type = "Bishop";
 			  color = "black";
+			  value = 3;
 			break;
 		  case "R":
 			  type = "Rook";
 			  color = "white";
+			  value = 5;
 			break;
 		  case "r":
 			  type = "Rook";
 			  color = "black";
+			  value = 5;
 			break;
 		  case "Q":
 			  type = "Queen";
 			  color = "white";
+			  value = 9;
 			break;
 		  case "q":
 			  type = "Queen";
 			  color = "black";
+			  value = 9;
 			break;
 		  case "K":
 			  type = "King";
 			  color = "white";
+			  value = 100;
 		    break;
 		  case "k":
 			  type = "King";
 			  color = "black";
+			  value = 100;
 		    break;
 		}
 		if(type.equals("") || color.equals("")) {
 			return null;
 		}else {
-			return new Piece(color,type);
+			return new Piece(color,type, value);
+			//return new Piece(color,type);
 		}
 	}
 

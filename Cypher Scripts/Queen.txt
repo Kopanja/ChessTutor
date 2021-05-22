@@ -1,0 +1,78 @@
+//CREATE VISION_SQUARE relationship for QUEEN
+
+---DIAGONAL_RIGHT_UP
+
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_RIGHT_UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_RIGHT_UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_RIGHT_DOWN
+
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_RIGHT_DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_RIGHT_DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_LEFT_UP
+
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_LEFT_UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_LEFT_UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_LEFT_DOWN
+
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_LEFT_DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_LEFT_DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--UP
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--DOWN
+
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--LEFT
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:LEFT *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:LEFT]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+--RIGHT
+MATCH (p:Piece{type : "Queen"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:RIGHT *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:RIGHT]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p

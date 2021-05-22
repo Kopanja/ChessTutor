@@ -1,5 +1,6 @@
 package com.ChessTutor.chessTutor.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PieceModel {
@@ -11,7 +12,6 @@ public class PieceModel {
 	List<Path> paths;
 	
 	List<Path> nextMoves;
-	
 	
 	List<Piece> isAttacking;
 	
@@ -28,6 +28,9 @@ public class PieceModel {
 		this.piece = piece;
 		this.isOnSquare = isOnSquare;
 		this.paths = paths;
+		this.nextMoves = new ArrayList<Path>();
+		this.isAttacking = new ArrayList<Piece>();
+		this.isDefending = new ArrayList<Piece>();
 	}
 
 
@@ -89,6 +92,7 @@ public class PieceModel {
 	public void setNextMoves(List<Path> nextMoves) {
 		this.nextMoves = nextMoves;
 	}
+	
 	
 	
 }

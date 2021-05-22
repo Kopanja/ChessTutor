@@ -1,0 +1,62 @@
+//CREATE VISION_SQUARE relationship for QUEEN
+
+---DIAGONAL_RIGHT_UP
+
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_RIGHT_UP]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+---DIAGONAL_RIGHT_DOWN
+
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_RIGHT_DOWN]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+---DIAGONAL_LEFT_UP
+
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_LEFT_UP]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+---DIAGONAL_LEFT_DOWN
+
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_LEFT_DOWN]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+--UP
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:UP]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+--DOWN
+
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DOWN]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+--LEFT
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:LEFT]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p
+
+--RIGHT
+MATCH (p:Piece{type : "King"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:RIGHT]->(s2:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s2)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s2)
+RETURN  s, s2, p

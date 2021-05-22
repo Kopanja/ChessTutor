@@ -1,0 +1,103 @@
+//CREATE VISION_SQUARE relationship for BISHOP
+
+---DIAGONAL_RIGHT_UP
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_RIGHT_UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_RIGHT_UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_RIGHT_DOWN
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_RIGHT_DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_RIGHT_DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_LEFT_UP
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_LEFT_UP *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_LEFT_UP]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+
+---DIAGONAL_LEFT_DOWN
+
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH ns = (s)-[:DIAGONAL_LEFT_DOWN *]->(s2:Square)
+UNWIND nodes(ns) as n
+MATCH (n)-[:DIAGONAL_LEFT_DOWN]->(s3)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3)) 
+CREATE (p)-[r2:VISION_SQUARE]->(s3)
+RETURN nodes(ns), p
+///////////////////////////////////////////////////////
+
+POSSIBLE MOVES
+
+--DIAGONAL_RIGHT_UP
+
+MATCH (p:Piece {type : "Bishop"})-[:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_RIGHT_UP *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "DIAGONAL_RIGHT_UP>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------
+--DIAGONAL_LEFT_UP
+
+MATCH (p:Piece {type : "Bishop"})-[:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_LEFT_UP *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "DIAGONAL_LEFT_UP>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------
+--DIAGONAL_LEFT_DOWN
+
+MATCH (p:Piece {type : "Bishop"})-[:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_LEFT_DOWN *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "DIAGONAL_LEFT_DOWN>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+----------------------------------------------------------------------------------------------
+--DIAGONAL_RIGHT_DOWN
+
+MATCH (p:Piece {type : "Bishop"})-[:IsOn]->(s:Square)
+MATCH (s)-[:DIAGONAL_RIGHT_DOWN *]->(s2:Square)
+WHERE NOT EXISTS((:Piece)-[:IsOn]->(s2))
+WITH s, collect(s2) AS freeNodes
+CALL apoc.path.subgraphAll(s, {
+    relationshipFilter: "DIAGONAL_RIGHT_DOWN>",
+    whitelistNodes : freeNodes
+})
+YIELD nodes
+RETURN nodes;
+--------------------------------------------------------------------------------------------------
+MATCH (p:Piece{type : "Bishop"})-[r:IsOn]->(s:Square)
+MATCH (s)-[ru:DIAGONAL_RIGHT_UP *]->(:Square)
+MATCH (s)-[rd:DIAGONAL_RIGHT_DOWN *]->(:Square)
+MATCH (s)-[lu:DIAGONAL_LEFT_UP *]->(:Square)
+MATCH (s)-[ld:DIAGONAL_LEFT_DOWN *]->(:Square)
+RETURN apoc.path.create(p, [ru,rd,lu,ld]) AS path

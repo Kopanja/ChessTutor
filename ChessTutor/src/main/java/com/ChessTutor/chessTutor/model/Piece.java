@@ -13,13 +13,24 @@ public class Piece {
 	private String color;
 	
 	private String type;
-
+	
+	private int value;
+/*
 	public Piece(String color, String type) {
 		super();
 		this.id = null;
 		this.color = color;
 		this.type = type;
 	}
+	*/
+	public Piece(String color, String type, int value) {
+		super();
+		this.id = null;
+		this.color = color;
+		this.type = type;
+		this.value = value;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -43,6 +54,15 @@ public class Piece {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
 	}
 	
 	

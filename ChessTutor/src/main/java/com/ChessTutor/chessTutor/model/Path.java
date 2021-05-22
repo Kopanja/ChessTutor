@@ -1,5 +1,6 @@
 package com.ChessTutor.chessTutor.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Path {
@@ -9,7 +10,7 @@ public class Path {
 	List<Square> path;
 
 	public Path() {
-		super();
+		this.path = new ArrayList<Square>();
 	}
 
 	public Path(Square startSquare, List<Square> path) {

@@ -1,0 +1,23 @@
+--UP
+MATCH (p:Piece{type : "Knight"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:UP]->(:Square)-[:UP]->(s2:Square)-[:LEFT|:RIGHT]->(s3:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))
+CREATE (p)-[:VISION_SQUARE]->(s3)
+
+--DOWN
+MATCH (p:Piece{type : "Knight"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:DOWN]->(:Square)-[:DOWN]->(s2:Square)-[:LEFT|:RIGHT]->(s3:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))
+CREATE (p)-[:VISION_SQUARE]->(s3)
+
+--LEFT
+MATCH (p:Piece{type : "Knight"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:LEFT]->(:Square)-[:LEFT]->(s2:Square)-[:UP|:DOWN]->(s3:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))
+CREATE (p)-[:VISION_SQUARE]->(s3)
+
+--RIGHT
+MATCH (p:Piece{type : "Knight"})-[r:IsOn]->(s:Square)
+MATCH (s)-[:RIGHT]->(:Square)-[:RIGHT]->(s2:Square)-[:UP|:DOWN]->(s3:Square)
+WHERE NOT EXISTS((p)-[:VISION_SQUARE]->(s3))
+CREATE (p)-[:VISION_SQUARE]->(s3)
