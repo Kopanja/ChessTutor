@@ -81,13 +81,44 @@ class ChessComp extends Component {
     this.setState({fen : event.target.value});
     
   };
+
+  onDrop = ({ sourceSquare, targetSquare }) => {
+    // see if the move is legal
+    let oldFen = this.game.fen();
+    let move = this.game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: "q" // always promote to a queen for example simplicity
+    });
+    console.log(move)
+    // illegal move
+    if (move === null) return;
+    this.setState(({ history, pieceSquare }) => ({
+      fen: this.game.fen(),
+      history: this.game.history({ verbose: true }),
+      squareStyles: squareStyling({ pieceSquare, history })
+    }));
+    
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({move : move, newFen : this.game.fen(), oldFen : oldFen})
+  };
+  fetch('http://localhost:8080/api/square/post-move', requestOptions)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  
+  };
+
   onSquareClick = square => {
+    
     let squareObj = {id : 0, name : "", pieceId : 0}
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ graphName: square.toUpperCase() })
   };
+  /*
   fetch('http://localhost:8080/api/square/by-square-name', requestOptions)
       .then(response => response.json())
       .then(data => {
@@ -122,7 +153,7 @@ class ChessComp extends Component {
       
       });
         
-        
+        */
     
     
   };
@@ -139,7 +170,7 @@ class ChessComp extends Component {
     return (
       <div>
         <Chessboard position={this.state.fen} onSquareClick = {this.onSquareClick}
-        squareStyles={this.state.squareStyles}/>
+        squareStyles={this.state.squareStyles} onDrop = {this.onDrop}/>
         <form  onSubmit={this.sendFen}>
           <label>FEN:</label>
           <input type ="text" value={this.state.fen} onChange={this.fenChanged}></input>

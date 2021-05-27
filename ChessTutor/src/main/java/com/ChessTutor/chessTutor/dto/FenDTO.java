@@ -24,6 +24,12 @@ public class FenDTO {
 	public void setFenString(String fenString) {
 		this.fenString = fenString;
 	}
+
+
+	@Override
+	public String toString() {
+		return "FenDTO [fenString=" + fenString + "]";
+	}
 	
 	
 }

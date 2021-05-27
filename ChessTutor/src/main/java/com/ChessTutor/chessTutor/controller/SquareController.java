@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 
 import com.ChessTutor.chessTutor.dto.FenDTO;
+import com.ChessTutor.chessTutor.dto.NewPositionDTO;
 import com.ChessTutor.chessTutor.dto.SquareDTO;
 import com.ChessTutor.chessTutor.dto.SquareNameDTO;
+import com.ChessTutor.chessTutor.dto.StockfishEvalDTO;
 import com.ChessTutor.chessTutor.model.Piece;
 import com.ChessTutor.chessTutor.model.PieceModel;
 import com.ChessTutor.chessTutor.model.Square;
@@ -27,6 +30,8 @@ import com.ChessTutor.chessTutor.repository.SquareRepository;
 import com.ChessTutor.chessTutor.service.PieceService;
 import com.ChessTutor.chessTutor.util.FenParser;
 import com.ChessTutor.chessTutor.util.PieceFactory;
+
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(value="api/square")
@@ -65,10 +70,12 @@ public class SquareController {
    
 		String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq c6 0 2";
 		//String response = restTemplate.getForObject("http://localhost:5000/", String.class);
-		
+		FenDTO fenString = new FenDTO(fen);
 		String response = webClientBuilder.build()
-		.get()
-		.uri("http://localhost:5000/")
+		.post()
+		.uri("http://localhost:5000/test")
+		.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+		.body(Mono.just(fenString), FenDTO.class)
 		.retrieve()
 		.bodyToMono(String.class)
 		.block();
@@ -97,6 +104,34 @@ public class SquareController {
 		//System.out.println(squares);
         return new ResponseEntity<>(squares, HttpStatus.OK);
     }
+	
+	
+	@PostMapping(value = "/post-move")
+    public ResponseEntity<FenDTO> postMove(@RequestBody NewPositionDTO newPosition) {
+		System.out.println(newPosition);
+		
+		FenDTO s = new FenDTO("A");
+		
+		//GET POSITION EVAL FROM STOCKFISH
+		
+		StockfishEvalDTO stockfishEval = webClientBuilder.build()
+				.post()
+				.uri("http://localhost:5000/position-eval")
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.body(Mono.just(newPosition), NewPositionDTO.class)
+				.retrieve()
+				.bodyToMono(StockfishEvalDTO.class)
+				.block();
+		System.out.println("Stockfish Eval: " + stockfishEval);
+		
+		//////////////////////////////////////////////////////////////////////
+		
+		
+		//System.out.println(squares);
+        return new ResponseEntity<>(s, HttpStatus.OK);
+    }
+	
+	
 	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseEntity<List<PieceModel>> testMethod() {
